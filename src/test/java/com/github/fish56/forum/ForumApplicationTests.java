@@ -15,6 +15,11 @@ public class ForumApplicationTests {
     @Autowired
     protected MockMvc mockMvc;
 
+    /**
+     * 测试数据库id为1的用户的token
+     */
+    protected String userToken = "hello_token";
+
     @Test
     public void contextLoads() {
     }

@@ -21,9 +21,9 @@ public class User {
     @Column(nullable = false, length = 20) // 映射为字段，值不能为空
     private String name;
 
-    // @NotNull(message = "邮箱不能为空")
-    // @Size(max=50)
-    // @Email(message= "邮箱格式不对" )
+    @NotNull(message = "邮箱不能为空")
+    @Size(max=50)
+    @Email(message= "邮箱格式不对" )
     @Column(nullable = false, length = 50, unique = true)
     private String email;
 
