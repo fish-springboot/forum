@@ -33,10 +33,10 @@ public class UserControllerTest extends ForumApplicationTests {
      */
     @Test
     public void createUser() throws Exception{
-        ResultMatcher isOk = MockMvcResultMatchers.status().is(200);
+        ResultMatcher is201 = MockMvcResultMatchers.status().is(201);
 
         User user = new User();
-        user.setName("Jon");
+        user.setName("Jack");
         user.setPassword("12345634534534534");
         user.setEmail("sdf@dfsd.com");
         System.out.println(JSONObject.toJSONString(user));
@@ -47,11 +47,11 @@ public class UserControllerTest extends ForumApplicationTests {
 
         mockMvc.perform(builder)
                 .andDo(MockMvcResultHandlers.print())
-                .andExpect(isOk);
+                .andExpect(is201);
     }
 
     /**
-     *
+     * 查询一个id为1的用户的信息
      * @throws Exception
      */
     @Test
@@ -65,9 +65,13 @@ public class UserControllerTest extends ForumApplicationTests {
                 .andExpect(isOk);
     }
 
+    /**
+     * 修改id为1的用户的信息
+     * @throws Exception
+     */
     @Test
     public void changeUserInfo() throws Exception{
-        ResultMatcher isOk = MockMvcResultMatchers.status().is(201);
+        ResultMatcher isOk = MockMvcResultMatchers.status().is(200);
 
         User user = new User();
         user.setId(1);

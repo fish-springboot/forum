@@ -13,12 +13,15 @@ import javax.validation.constraints.Size;
 @Data
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    /**
+     * 这里我选择name作为唯一键来登录
+     */
     @NotNull(message = "姓名不能为空")
     @Size(min=2, max=20)
-    @Column(nullable = false, length = 20) // 映射为字段，值不能为空
+    @Column(unique = true, nullable = false, length = 20) // 映射为字段，值不能为空
     private String name;
 
     @NotNull(message = "邮箱不能为空")

@@ -1,9 +1,10 @@
 package com.github.fish56.forum.user;
 
-import com.github.fish56.forum.controller.ServerResponse;
+import com.github.fish56.forum.service.ServerResponse;
 import com.github.fish56.forum.service.ServiceResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -25,10 +26,16 @@ public class UserController {
     }
 
     @PostMapping
-    public User createUser(@RequestBody User user){
+    public ResponseEntity createUser(@RequestBody User user){
         log.info("正在创建用户");
         log.info(user.toString());
-        return userRepos.save(user);
+        user.setId(null);
+        ServiceResponse serviceResponse = userService.create(user);
+        if (serviceResponse.hasError()) {
+            return serviceResponse.getErrorResponseEntity();
+        } else {
+            return serviceResponse.getSuccessResponseEntity(201);
+        }
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
@@ -49,7 +56,7 @@ public class UserController {
         if (serviceResponse.hasError()){
             return serviceResponse.getErrorResponseEntity();
         }else {
-            return serviceResponse.getSuccessResponseEntity(201);
+            return serviceResponse.getSuccessResponseEntity(200);
         }
     }
 }

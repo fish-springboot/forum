@@ -1,4 +1,4 @@
-package com.github.fish56.forum.entity;
+package com.github.fish56.forum.comment;
 
 import com.github.fish56.forum.article.Article;
 import com.github.fish56.forum.user.User;

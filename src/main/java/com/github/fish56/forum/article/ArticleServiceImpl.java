@@ -20,9 +20,10 @@ public class ArticleServiceImpl implements ArticleService {
         if (!optionalArticle.isPresent()) {
             log.info("查询的文章不存在");
             return ServiceResponse.getInstance(404, "当前文章不存在");
+        } else {
+            log.info("查询到文章: " + optionalArticle.get().toString());
+            return ServiceResponse.getInstance(optionalArticle.get());
         }
-        log.info("查询到文章: " + optionalArticle.get().toString());
-        return ServiceResponse.getInstance(optionalArticle.get());
     }
 
     /**
@@ -39,8 +40,12 @@ public class ArticleServiceImpl implements ArticleService {
     public ServiceResponse create(Article article) {
         log.info("正在将文章信息插入数据库: " + article.toString());
         article.setId(null);
+
         articleRepos.save(article);
         return ServiceResponse.getInstance(article);
+
+//            log.info("插入数据库异常");
+//            return ServiceResponse.getInstance(400, e.getMessage());
     }
 
     @Override

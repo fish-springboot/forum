@@ -19,6 +19,9 @@ public class ArticleServiceImplTest extends ForumApplicationTests {
     @Autowired
     private ArticleService articleService;
 
+    /**
+     * 用过id来查询一个文章
+     */
     @Test
     public void findById(){
         ServiceResponse<Article> response = articleService.findById(1);
@@ -26,6 +29,9 @@ public class ArticleServiceImplTest extends ForumApplicationTests {
         assertTrue( response.getData().getId() == 1);
     }
 
+    /**
+     * 创建一个文章
+     */
     @Test
     public void create() {
         Article article = new Article();
@@ -42,7 +48,8 @@ public class ArticleServiceImplTest extends ForumApplicationTests {
 
         ServiceResponse<Article> response = articleService.create(article);
         log.info(response.getData().toString());
-        assertNotNull(response.getData().getId());
+        // 因为数据库目前只有一个记录，所以插入新的数据的id一定是2
+        assertTrue(response.getData().getId().equals(2));
     }
 
     @Test

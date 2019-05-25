@@ -1,4 +1,4 @@
-package com.github.fish56.forum.controller;
+package com.github.fish56.forum.service;
 
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.http.ResponseEntity;

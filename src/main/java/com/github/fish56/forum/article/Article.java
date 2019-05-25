@@ -4,10 +4,13 @@ import com.alibaba.fastjson.JSONObject;
 import com.github.fish56.forum.plate.Plate;
 import com.github.fish56.forum.user.User;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Date;
 
 /**
  * 文章实体
@@ -58,13 +61,22 @@ public class Article {
         return JSONObject.toJSONString(this);
     }
 
-//    @Column(nullable = false) // 映射为字段，值不能为空
-//    @CreationTimestamp  // 由数据库自动创建时间
-//    private Timestamp createTime;
-//
-//    @Column(nullable = false) // 映射为字段，值不能为空
-//    @UpdateTimestamp  // 由数据库更新
-//    private Timestamp updateTime;
+    @Column(nullable = false) // 映射为字段，值不能为空
+    private Date createTime;
+
+    @Column(nullable = false) // 映射为字段，值不能为空
+    private Date updateTime;
+
+    @PrePersist
+    public void onSave(){
+        createTime = new Date();
+        updateTime = new Date();
+    }
+
+    @PreUpdate
+    public void onUpdate(){
+        updateTime = new Date();
+    }
 
     /**
      * Normal: 普通文章
