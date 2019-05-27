@@ -1,15 +1,21 @@
 package com.github.fish56.forum.plate;
 
-import com.github.fish56.forum.service.ErrorResponseEntity;
+import com.alibaba.fastjson.JSONObject;
+import com.github.fish56.forum.service.ServerResponseMessage;
 import com.github.fish56.forum.user.User;
+import com.github.fish56.forum.validate.ShouldValidate;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @RestController
 @RequestMapping("/plates")
 public class PlateController {
@@ -25,7 +31,8 @@ public class PlateController {
 
     @ApiOperation("创建一个版块")
     @PostMapping
-    public ResponseEntity<Plate> postPlate(@RequestBody Plate plate, @RequestAttribute User user){
+    public ResponseEntity<Plate> postPlate(@ShouldValidate @RequestBody Plate plate,
+                                           @RequestAttribute User user){
         plate.setAdmin(user);
         plate.setId(null);
         plateRepos.save(plate);
@@ -33,25 +40,26 @@ public class PlateController {
     }
 
     @ApiOperation("修改版块的信息")
-    @PatchMapping
-    public Object editPlates(@RequestBody Plate plate, @RequestAttribute User user){
+    @RequestMapping(value = "/{plateId}", method = RequestMethod.PATCH)
+    public Object editPlates(@PathVariable Integer plateId,
+                             @ShouldValidate @RequestBody Plate plate,
+                             @RequestAttribute User user){
+        log.info("用户" + user.getId() + "正在尝试修改版块" + plateId + "的信息");
 
-        // 参数中没有字段，说明这是插入数据的请求
-        if (plate.getId() == null) {
-            return ErrorResponseEntity.get(400, "请传递目标版块的id");
-        }
-        Optional<Plate> optionalPlate = plateRepos.findById(plate.getId());
+        // 查询目标版块的信息
+        Optional<Plate> optionalPlate = plateRepos.findById(plateId);
 
         // 说明数据库中没有对应ID的数据
         if (!optionalPlate.isPresent()){
-            return ErrorResponseEntity.get(404, "目标版块不存在");
+            return ServerResponseMessage.get(404, "目标版块不存在");
         }
 
+        // 这个是数据库中这个版块的信息
         Plate plateInDB = optionalPlate.get();
 
         // 判断当前用户是否是版块管理员
         if (!plateInDB.getAdmin().getId().equals(user.getId())){
-            return ErrorResponseEntity.get(401, "只有版块管理员可以修改版块形象");
+            return ServerResponseMessage.get(401, "只有版块管理员可以修改版块信息");
         }
 
         // 将记录插入数据库中

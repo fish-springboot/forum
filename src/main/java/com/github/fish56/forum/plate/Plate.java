@@ -2,6 +2,7 @@ package com.github.fish56.forum.plate;
 
 import com.github.fish56.forum.user.User;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -15,6 +16,7 @@ import javax.validation.constraints.Size;
  */
 @Entity
 @Data
+@Accessors(chain = true)
 public class Plate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

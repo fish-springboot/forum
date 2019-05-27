@@ -1,23 +1,25 @@
 package com.github.fish56.forum.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Entity
 @Data
+@Accessors(chain = true)
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     /**
-     * 这里我选择name作为唯一键来登录
+     * 这里可以选择name作为唯一键来登录
      */
     @NotNull(message = "姓名不能为空")
     @Size(min=2, max=20)
@@ -25,37 +27,38 @@ public class User {
     private String name;
 
     @NotNull(message = "邮箱不能为空")
-    @Size(max=50)
+    @Size(max=30)
     @Email(message= "邮箱格式不对" )
-    @Column(nullable = false, length = 50, unique = true)
+    @Column(length = 30, unique = true)
     private String email;
 
+    @Column(unique = true)
     private String token;
 
+    /**
+     * 如果允许用户通过第三方登录，那么可以允许密码为空
+     */
     @NotNull(message = "密码不能为空")
     @Size(min = 10, max = 30, message = "密码长度应该在10-30之间")
-    @Column(length = 100)
+    @Column(nullable = false, length = 30)
     private String password;
 
     @Column(length = 200)
     private String avatar;
 
     /**
-     * 确保在更新时只更新部分字段
-     * @param user
+     * 通过UserVo来修改自身的字段
+     * @param userVo
      */
-    public void updateWithNewValue(User user){
-        if (user.getName() != null) {
-            name = user.getName();
+    public void updateByVo(UserVo userVo){
+        if (userVo.getName() != null) {
+            name = userVo.getName();
         }
-        if (user.getEmail() != null) {
-            email = user.getEmail();
+        if (userVo.getEmail() != null) {
+            email = userVo.getEmail();
         }
-        if (user.getAvatar() != null) {
-            avatar = user.getAvatar();
-        }
-        if (user.getToken() != token){
-            token = user.getToken();
+        if (userVo.getAvatar() != null) {
+            avatar = userVo.getAvatar();
         }
     }
 
@@ -64,20 +67,24 @@ public class User {
      * 但是解析的时候需要，因为数据是从前端通过字符串传过来的
      * @return
      */
-    //@JsonIgnore
+    @JsonIgnore
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
+    @JsonProperty("password")
+    public User setPassword(String password) {
         this.password = password;
+        return this;
     }
-    //@JsonIgnore
+    @JsonIgnore
     public String getToken() {
         return token;
     }
 
-    public void setToken(String token) {
+    @JsonProperty("token")
+    public User setToken(String token) {
         this.token = token;
+        return this;
     }
 }

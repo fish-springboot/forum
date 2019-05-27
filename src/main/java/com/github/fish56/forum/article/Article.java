@@ -1,22 +1,24 @@
 package com.github.fish56.forum.article;
 
 import com.alibaba.fastjson.JSONObject;
+import com.github.fish56.forum.article.comment.Comment;
 import com.github.fish56.forum.plate.Plate;
 import com.github.fish56.forum.user.User;
 import lombok.Data;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 文章实体
  */
 @Entity
 @Data
+@Accessors(chain = true)
 public class Article {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,8 +29,10 @@ public class Article {
     @Column(nullable = false) // 映射为字段，值不能为空
     private String title;
 
+    /**
+     * mysql中的大数据类型
+     */
     @Lob
-    @Basic(fetch=FetchType.LAZY)
     private String content;
 
     @OneToOne
@@ -37,23 +41,16 @@ public class Article {
     @OneToOne
     private Plate plate;
 
-    private State state;
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "comment_id")
+    private List<Comment> comments;
 
-    public void updateByArticle(Article article){
-        if (article.title != null){
-            this.title = article.title;
+    public void updateByVo(ArticleVo articleVo){
+        if (articleVo.getTitle() != null){
+            this.title = articleVo.getTitle();
         }
-        if (article.content != null){
-            this.content = article.content;
-        }
-        if (article.author != null) {
-            this.author = article.author;
-        }
-        if (article.plate != null) {
-            this.plate = article.plate;
-        }
-        if (article.state != null) {
-            this.state = article.state;
+        if (articleVo.getContent() != null){
+            this.content = articleVo.getContent();
         }
     }
 
@@ -78,6 +75,7 @@ public class Article {
         updateTime = new Date();
     }
 
+    // private State state;
     /**
      * Normal: 普通文章
      * Essence: 精华文章
@@ -89,8 +87,8 @@ public class Article {
      * - 是否是热门
      *   这种信息不应该存在于这里，这里只记录状态，不记录行为
      */
-    public static enum State{
-        Normal, Essence,
-        Noticed, Locked, Deleted
-    }
+//    public static enum State{
+//        Normal, Essence,
+//        Noticed, Locked, Deleted
+//    }
 }

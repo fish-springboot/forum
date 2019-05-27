@@ -13,54 +13,37 @@ public class UserServiceImplTest extends ForumApplicationTests {
     private UserService userService;
 
     private User user;
-
     @Before
     public void init(){
-        user = new User();
-        user.setName("Jack");
-        user.setEmail("overwall@gmail.com");
-        user.setToken("dsfewwef");
-        user.setPassword("12345678910");
+        user = new User().setName("Jack")
+                .setEmail("overwall@gmail.com")
+                .setToken("dsfewwef")
+                .setPassword("12345678910");
     }
 
     /**
      * 创建一个用户
+     *   应为默认数据中已经有一个id为1的用户了，
+     *   所以保存用户后，它的id应该是为2的
      */
     @Test
     public void create(){
         ServiceResponse<User> response = userService.create(user);
         System.out.println(response.getData());
-        assertTrue(response.getData().getId() == 2);
+        assertTrue(response.getData().getId().equals(2));
     }
 
     /**
-     * 修改id为1的用户的信息
+     * 修改id为1的用户的姓名
      */
     @Test
-    public void changeUserInfo1() {
-        User user = new User();
-        user.setId(1);
-        user.setName("Jack");
+    public void update() {
+        String newName = "Jack";
+        UserVo userVo = new UserVo().setName(newName);
 
-        ServiceResponse<User> serviceResponse = userService.changeUserInfo(user);
+        ServiceResponse<User> serviceResponse = userService.update(1, userVo);
 
         System.out.println(serviceResponse.getData());
-        assertTrue(serviceResponse.getData().getName().equals("Jack"));
+        assertEquals(newName, serviceResponse.getData().getName());
     }
-
-    /**
-     * 禁止直接修改密码
-     */
-    @Test
-    public void changeUserInfo2(){
-        user.setId(1);
-        user.setName("Jack");
-        user.setPassword("aaaaaaaaaaa");
-
-        ServiceResponse serviceResponse = userService.changeUserInfo(user);
-
-        System.out.println(serviceResponse.getErrorMessage());
-        assertTrue(serviceResponse.hasError());
-    }
-
 }

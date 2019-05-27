@@ -1,22 +1,28 @@
-package com.github.fish56.forum.comment;
+package com.github.fish56.forum.article.comment;
 
 import com.github.fish56.forum.article.Article;
 import com.github.fish56.forum.user.User;
 import lombok.Data;
+import lombok.experimental.Accessors;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.mapping.ToOne;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 
 /**
  * 评论信息
  */
 @Entity
 @Data
+@Accessors(chain = true)
 public class Comment {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @OneToOne
+    @ManyToOne
     private Article article;
 
     @OneToOne
@@ -29,13 +35,11 @@ public class Comment {
      * 如果这是回复评论A的评论，那么它的值就是A
      */
     @OneToOne
-    private Comment replayTo;
+    private Comment replyTo;
 
-    //    @Column(nullable = false) // 映射为字段，值不能为空
-    //    @CreationTimestamp  // 由数据库自动创建时间
-    //    private Timestamp createTime;
-    //
-    //    @Column(nullable = false) // 映射为字段，值不能为空
-    //    @UpdateTimestamp  // 由数据库更新
-    //    private Timestamp updateTime;
+    @CreationTimestamp
+    private Timestamp createTime;
+
+    @UpdateTimestamp
+    private Timestamp updateTime;
 }

@@ -1,6 +1,5 @@
 package com.github.fish56.forum.service;
 
-import com.alibaba.fastjson.JSONObject;
 import lombok.Data;
 import org.springframework.http.ResponseEntity;
 
@@ -51,9 +50,6 @@ public class ServiceResponse<T> {
         return ResponseEntity.status(200).body(data);
     }
 
-    public static ServiceResponse getInstance(){
-        return new ServiceResponse();
-    }
     public static ServiceResponse getInstance(int errorStatus, String errorMessage){
         ServiceResponse serviceResponse = new ServiceResponse();
         serviceResponse.setErrorStatus(errorStatus);

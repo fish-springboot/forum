@@ -17,11 +17,16 @@ import static org.junit.Assert.*;
 
 @Slf4j
 public class ArticleControllerTest extends ForumApplicationTests {
+    /**
+     * 查询id为1的用户发表的文章
+     * @throws Exception
+     */
     @Test
     public void getArticles() throws Exception{
         ResultMatcher isOk = MockMvcResultMatchers.status().is(200);
 
-        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get("/articles");
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get("/articles")
+                .param("authorId", "1");
 
         mockMvc.perform(builder)
                 .andDo(MockMvcResultHandlers.print())
@@ -30,19 +35,43 @@ public class ArticleControllerTest extends ForumApplicationTests {
 
     @Test
     public void createArticle() throws Exception {
-        Article article = new Article();
-        article.setTitle("好好好");
-        article.setContent("sdf");
-        ResultMatcher isOk = MockMvcResultMatchers.status().is(201);
+        Plate plate = new Plate().setId(1);
+        Article article = new Article()
+                .setTitle("好好好").setContent("这是一个文章正文内容")
+                .setPlate(plate);
 
+        ResultMatcher isOk = MockMvcResultMatchers.status().is(201);
         // 创建后应该返回id
         ResultMatcher hasId = MockMvcResultMatchers
                 .jsonPath("$.id")
                 .exists();
 
         MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/articles")
+                .header("Authorization", "bearer " + userToken)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(article.toJSONString());
+
+        mockMvc.perform(builder)
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(isOk)
+                .andExpect(hasId);
+    }
+
+    /**
+     * 标题长度不够，所以会被Validator给拦截
+     * @throws Exception
+     */
+    @Test
+    public void createArticle2() throws Exception {
+        ArticleVo articleVo = new ArticleVo()
+                .setTitle("t");
+
+        ResultMatcher isOk = MockMvcResultMatchers.status().is(400);
+
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/articles")
+                .header("Authorization", "bearer " + userToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JSONObject.toJSONString(articleVo));
 
         mockMvc.perform(builder)
                 .andDo(MockMvcResultHandlers.print())

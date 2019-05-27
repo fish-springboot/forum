@@ -49,6 +49,28 @@ public class PlateControllerTest extends ForumApplicationTests {
     }
 
     /**
+     * 尝试创建一个版块，但是标题不对，会抛出异常
+     * @throws Exception
+     */
+    @Test
+    public void postPlate2() throws Exception{
+        ResultMatcher is201 = MockMvcResultMatchers.status().is(201);
+
+        Plate plate = new Plate();
+        plate.setTitle("s");
+        plate.setInfo("spring技术交流学习版块");
+
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/plates")
+                .header("Authorization", "bearer " + userToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JSONObject.toJSONString(plate));
+
+        mockMvc.perform(builder)
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(is201);
+    }
+
+    /**
      * 尝试修改id为1的版块的内容
      * @throws Exception
      */

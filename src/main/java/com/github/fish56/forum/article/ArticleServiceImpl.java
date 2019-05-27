@@ -3,6 +3,9 @@ package com.github.fish56.forum.article;
 import com.github.fish56.forum.service.ServiceResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -12,6 +15,12 @@ import java.util.Optional;
 public class ArticleServiceImpl implements ArticleService {
     @Autowired
     private ArticleRepos articleRepos;
+
+    @Override
+    public ServiceResponse findAll(Example<Article> articleExample, Pageable page) {
+        Page<Article> articlePage = articleRepos.findAll(articleExample, page);
+        return ServiceResponse.getInstance(articlePage.iterator());
+    }
 
     @Override
     public ServiceResponse findById(Integer id) {
@@ -43,24 +52,21 @@ public class ArticleServiceImpl implements ArticleService {
 
         articleRepos.save(article);
         return ServiceResponse.getInstance(article);
-
-//            log.info("插入数据库异常");
-//            return ServiceResponse.getInstance(400, e.getMessage());
     }
 
     @Override
-    public ServiceResponse update(Article article) {
+    public ServiceResponse updateByVo(Integer articleId, ArticleVo articleVo) {
         log.info("正在更新文章信息");
-        Optional<Article> optionalArticle = articleRepos.findById(article.getId());
+        Optional<Article> optionalArticle = articleRepos.findById(articleId);
 
         if (!optionalArticle.isPresent()) {
             log.info("试图更新的文章不存在");
             return ServiceResponse.getInstance(404, "试图更新的文章不存在");
         }
 
-        Article articleInDB = optionalArticle.get();
-        articleInDB.updateByArticle(article);
-        articleRepos.save(articleInDB);
-        return ServiceResponse.getInstance(articleInDB);
+        Article article = optionalArticle.get();
+        article.updateByVo(articleVo);
+        articleRepos.save(article);
+        return ServiceResponse.getInstance(article);
     }
 }

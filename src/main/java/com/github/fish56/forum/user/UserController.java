@@ -1,12 +1,17 @@
 package com.github.fish56.forum.user;
 
-import com.github.fish56.forum.service.ServerResponse;
+import com.github.fish56.forum.validate.ShouldValidate;
+import com.github.fish56.forum.service.ServerResponseMessage;
 import com.github.fish56.forum.service.ServiceResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -25,10 +30,30 @@ public class UserController {
         return userRepos.findAll();
     }
 
+    /**
+     * 这里使用了一般的方法作为参数校验，可以看到：
+     *   - 侵入性很强
+     *   - 模板代码冗长
+     * @param user
+     * @param bindingResult
+     * @return
+     */
     @PostMapping
-    public ResponseEntity createUser(@RequestBody User user){
+    public ResponseEntity createUser(@Valid @RequestBody User user, BindingResult bindingResult){
+        if (bindingResult.hasErrors()){
+            StringBuilder errorMessage = new StringBuilder();
+
+            bindingResult.getAllErrors().forEach((objectError) -> {
+                // 将错误信息输出到errorMessage中
+                errorMessage.append(objectError.getDefaultMessage() + ", ");
+
+            });
+            return ServerResponseMessage.get(400, errorMessage.toString());
+        }
+
         log.info("正在创建用户");
         log.info(user.toString());
+        // 这里我们认为id应给交给数据库来生成，所以我们手动清除用户可能传递来的id
         user.setId(null);
         ServiceResponse serviceResponse = userService.create(user);
         if (serviceResponse.hasError()) {
@@ -45,18 +70,45 @@ public class UserController {
         if (userOptional.isPresent()){
             return userOptional.get();
         } else {
-            return ServerResponse.createErrorMessage(404, "用户不存在");
+            return ServerResponseMessage.get(404, "用户不存在");
         }
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PATCH)
-    public Object changeUserInfo(@PathVariable Integer id, @RequestBody User user){
+    public Object changeUserInfo(@PathVariable Integer id,
+                                 @ShouldValidate @RequestBody UserVo userVo){
         log.info("修改用户信息");
-        ServiceResponse serviceResponse = userService.changeUserInfo(user);
+        ServiceResponse serviceResponse = userService.update(id, userVo);
         if (serviceResponse.hasError()){
             return serviceResponse.getErrorResponseEntity();
         }else {
             return serviceResponse.getSuccessResponseEntity(200);
         }
+    }
+
+    @RequestMapping(value = "/{id}/token", method = RequestMethod.PATCH)
+    public Object getUserToken(@PathVariable Integer id,
+                               @RequestBody String password){
+        Optional<User> userOptional = userRepos.findById(id);
+        if (!userOptional.isPresent()) {
+            return ServerResponseMessage.get(404, "用户不存在");
+        }
+
+        User user = userOptional.get();
+
+        if (userService.checkById(id, password)){
+            log.info("正在更新用户的token");
+
+            userService.updateToken(user);
+
+            Map<String, String> tokenMap = new HashMap<>();
+            tokenMap.put("token", user.getToken());
+            return ResponseEntity.status(201).body(tokenMap);
+
+        } else {
+            log.info("密码和id不匹配");
+            return ServerResponseMessage.get(401, "密码和id不匹配");
+        }
+
     }
 }

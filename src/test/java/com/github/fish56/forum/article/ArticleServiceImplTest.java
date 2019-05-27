@@ -8,6 +8,8 @@ import com.github.fish56.forum.user.User;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.PageRequest;
 
 import static org.junit.Assert.*;
 
@@ -34,16 +36,12 @@ public class ArticleServiceImplTest extends ForumApplicationTests {
      */
     @Test
     public void create() {
-        Article article = new Article();
-        article.setTitle("好好好");
-        article.setContent("sdf");
+        Article article = new Article().setTitle("好好好").setContent("sdf");
 
-        User user = new User();
-        user.setId(1);
+        User user = new User().setId(1);
         article.setAuthor(user);
 
-        Plate plate = new Plate();
-        plate.setId(1);
+        Plate plate = new Plate().setId(1);
         article.setPlate(plate);
 
         ServiceResponse<Article> response = articleService.create(article);
@@ -55,10 +53,9 @@ public class ArticleServiceImplTest extends ForumApplicationTests {
     @Test
     public void update(){
         String newTitle = "titlllllle";
-        Article article = new Article();
-        article.setId(1);
-        article.setTitle(newTitle);
-        ServiceResponse<Article> serviceResponse = articleService.update(article);
+        ArticleVo articleVo = new ArticleVo().setTitle("titlllllle");
+
+        ServiceResponse<Article> serviceResponse = articleService.updateByVo(1, articleVo);
 
         log.info(serviceResponse.getData().toString());
 
@@ -67,5 +64,20 @@ public class ArticleServiceImplTest extends ForumApplicationTests {
 
         // 新的article的content的字段为null，所以这个字段应该忽略，而不是将原来的值设置为null
         assertNotNull(serviceResponse.getData().getContent());
+    }
+
+    @Test
+    public void findAll() {
+        Article article = new Article();
+
+        Plate plate = new Plate();
+        plate.setId(1);
+        article.setPlate(plate);
+
+        Example<Article> articleExample = Example.of(article);
+
+        System.out.println(JSONObject.toJSONString(
+                articleService.findAll(articleExample, PageRequest.of(0, 30)).getData()));
+
     }
 }
