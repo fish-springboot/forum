@@ -16,6 +16,6 @@ public interface ArticleService {
      * @return
      */
     public ServiceResponse<Article> findAll(Example<Article> articleExample, Pageable page);
-    public ServiceResponse<Article> create(Article article);
-    public ServiceResponse<Article> updateByVo(Integer articleId, ArticleVo articleVo);
+    public ServiceResponse<Article> create(Integer plateId, Article article);
+    public ServiceResponse<Article> updateByVo(Integer articleId, ArticleDTO articleDTO);
 }

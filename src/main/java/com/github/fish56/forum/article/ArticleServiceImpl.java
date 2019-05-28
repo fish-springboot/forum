@@ -1,5 +1,7 @@
 package com.github.fish56.forum.article;
 
+import com.github.fish56.forum.plate.Plate;
+import com.github.fish56.forum.plate.PlateRepos;
 import com.github.fish56.forum.service.ServiceResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,11 +10,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.Optional;
 
 @Slf4j
 @Service
 public class ArticleServiceImpl implements ArticleService {
+    @Autowired
+    private PlateRepos plateRepos;
     @Autowired
     private ArticleRepos articleRepos;
 
@@ -46,16 +51,21 @@ public class ArticleServiceImpl implements ArticleService {
      * @return
      */
     @Override
-    public ServiceResponse create(Article article) {
-        log.info("正在将文章信息插入数据库: " + article.toString());
+    public ServiceResponse create(Integer plateId, Article article) {
+        Optional<Plate> plateOptional = plateRepos.findById(plateId);
+        if (!plateOptional.isPresent()){
+            return ServiceResponse.getInstance(404, "版块" + plateId + "不存在");
+        }
+        article.setPlate(plateOptional.get());
         article.setId(null);
 
+        log.info("正在将文章信息插入数据库: " + article.toString());
         articleRepos.save(article);
         return ServiceResponse.getInstance(article);
     }
 
     @Override
-    public ServiceResponse updateByVo(Integer articleId, ArticleVo articleVo) {
+    public ServiceResponse updateByVo(Integer articleId, ArticleDTO articleDTO) {
         log.info("正在更新文章信息");
         Optional<Article> optionalArticle = articleRepos.findById(articleId);
 
@@ -65,7 +75,7 @@ public class ArticleServiceImpl implements ArticleService {
         }
 
         Article article = optionalArticle.get();
-        article.updateByVo(articleVo);
+        article.updateByDTO(articleDTO);
         articleRepos.save(article);
         return ServiceResponse.getInstance(article);
     }

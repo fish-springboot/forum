@@ -1,9 +1,11 @@
 package com.github.fish56.forum.user;
 
+import com.github.fish56.forum.validate.ShouldValidate;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
@@ -15,11 +17,13 @@ import javax.validation.constraints.Size;
  */
 @Data
 @Accessors(chain = true)
-public class UserVo {
+public class UserDTO {
 
+    @NotNull(groups = ShouldValidate.OnCreate.class, message = "创建User的时候必须设置name")
     @Size(min=2, max=20)
     private String name;
 
+    @NotNull(groups = ShouldValidate.OnCreate.class, message = "创建User的时候必须设置email")
     @Size(max=30)
     @Email(message= "邮箱格式不对" )
     private String email;

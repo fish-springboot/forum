@@ -3,7 +3,6 @@ package com.github.fish56.forum.article;
 import com.alibaba.fastjson.JSONObject;
 import com.github.fish56.forum.ForumApplicationTests;
 import com.github.fish56.forum.plate.Plate;
-import com.github.fish56.forum.user.User;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.springframework.http.MediaType;
@@ -12,8 +11,6 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-
-import static org.junit.Assert.*;
 
 @Slf4j
 public class ArticleControllerTest extends ForumApplicationTests {
@@ -63,7 +60,7 @@ public class ArticleControllerTest extends ForumApplicationTests {
      */
     @Test
     public void createArticle2() throws Exception {
-        ArticleVo articleVo = new ArticleVo()
+        ArticleDTO articleDTO = new ArticleDTO()
                 .setTitle("t");
 
         ResultMatcher isOk = MockMvcResultMatchers.status().is(400);
@@ -71,7 +68,7 @@ public class ArticleControllerTest extends ForumApplicationTests {
         MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/articles")
                 .header("Authorization", "bearer " + userToken)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JSONObject.toJSONString(articleVo));
+                .content(JSONObject.toJSONString(articleDTO));
 
         mockMvc.perform(builder)
                 .andDo(MockMvcResultHandlers.print())

@@ -8,12 +8,15 @@ import lombok.experimental.Accessors;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 import javax.validation.constraints.Size;
 
 @Entity
 @Data
 @Accessors(chain = true)
 public class User {
+    // 但是污染swagger啊，怎么办？
+    // @Null(message = "id 应该交给后代的创建")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -48,17 +51,17 @@ public class User {
 
     /**
      * 通过UserVo来修改自身的字段
-     * @param userVo
+     * @param userDTO
      */
-    public void updateByVo(UserVo userVo){
-        if (userVo.getName() != null) {
-            name = userVo.getName();
+    public void updateByDTO(UserDTO userDTO){
+        if (userDTO.getName() != null) {
+            name = userDTO.getName();
         }
-        if (userVo.getEmail() != null) {
-            email = userVo.getEmail();
+        if (userDTO.getEmail() != null) {
+            email = userDTO.getEmail();
         }
-        if (userVo.getAvatar() != null) {
-            avatar = userVo.getAvatar();
+        if (userDTO.getAvatar() != null) {
+            avatar = userDTO.getAvatar();
         }
     }
 

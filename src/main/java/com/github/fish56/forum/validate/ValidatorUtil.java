@@ -17,10 +17,14 @@ public class ValidatorUtil {
     private static javax.validation.Validator javaxValidator = Validation.buildDefaultValidatorFactory().getValidator();
     private static SpringValidatorAdapter validator =  new SpringValidatorAdapter(javaxValidator);
 
-    public static String validate(Object entity){
+    public static String validateDefault(Object entity){
+        return validate(entity);
+    }
+
+    public static String validate(Object entity, Object... validationHints){
         log.info("正在检验字段的合法性");
         Errors errors = new BeanPropertyBindingResult(entity, entity.getClass().getName());
-        validator.validate(entity, errors);
+        validator.validate(entity, errors, validationHints);
 
         // 如果没有错误信息，直接返回null
         if (!errors.hasErrors()){
@@ -35,6 +39,9 @@ public class ValidatorUtil {
                 errorMessage.append(objectError.getDefaultMessage() + ", ");
 
             });
+            if (errorMessage.length() > 2) {
+                errorMessage.delete(errorMessage.length() - 2, errorMessage.length());
+            }
             return errorMessage.toString();
         }
     }

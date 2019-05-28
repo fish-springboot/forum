@@ -10,7 +10,7 @@ public class ValidatorUtilTest {
     @Test
     public void validate() {
         User user = new User();
-        String validateMessage = ValidatorUtil.validate(user);
+        String validateMessage = ValidatorUtil.validateDefault(user);
         System.out.println(validateMessage);
     }
 }

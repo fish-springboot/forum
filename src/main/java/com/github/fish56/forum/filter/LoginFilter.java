@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.Optional;
 
 /**
  * 检查请求头中是否携带了token
@@ -18,6 +19,7 @@ import java.io.IOException;
 @Slf4j
 @Component
 public class LoginFilter implements Filter {
+    private static String BEARER = "bearer ";
     @Autowired
     private UserRepos userRepos;
 
@@ -26,15 +28,18 @@ public class LoginFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         log.debug("用户正在访问: " + servletRequest.getLocalAddr());
 
-        String token = null;
         String authorization = request.getHeader("Authorization");
-        if (authorization != null && authorization.length() > 7) {
+        String token = null;
+        if (authorization !=null && authorization.toLowerCase().startsWith(BEARER)) {
             // 去除 bearer 的前缀
             token = authorization.substring(7);
         }
 
         if (token == null) {
-            log.info("这是个匿名用户");
+            log.info("用户没有携带token，说明这是一个匿名访问");
+            log.info("为了使得用户可以在通过swagger-ui测试，对于匿名用户将其设置为用户1");
+            Optional<User> userOptional = userRepos.findById(1);
+            servletRequest.setAttribute("user", userOptional.get());
         } else {
             log.info("用户的token是: " + token);
             User user = userRepos.findByToken(token);
@@ -45,6 +50,7 @@ public class LoginFilter implements Filter {
                 servletRequest.setAttribute("user", user);
             }
         }
+
         filterChain.doFilter(servletRequest, servletResponse);
     }
 }

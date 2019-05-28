@@ -42,4 +42,13 @@ public class Comment {
 
     @UpdateTimestamp
     private Timestamp updateTime;
+
+    public void updateByDTO(CommentDTO commentDTO){
+        if (commentDTO.getContent()!=null){
+            content = commentDTO.getContent();
+        }
+        if (commentDTO.getReplyToId() != null){
+            replyTo = new Comment().setId(commentDTO.getReplyToId());
+        }
+    }
 }

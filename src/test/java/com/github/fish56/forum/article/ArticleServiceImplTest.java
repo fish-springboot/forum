@@ -36,15 +36,11 @@ public class ArticleServiceImplTest extends ForumApplicationTests {
      */
     @Test
     public void create() {
-        Article article = new Article().setTitle("好好好").setContent("sdf");
+        Article article = new Article()
+                .setTitle("好好好").setContent("sdf")
+                .setAuthor(new User().setId(1));
 
-        User user = new User().setId(1);
-        article.setAuthor(user);
-
-        Plate plate = new Plate().setId(1);
-        article.setPlate(plate);
-
-        ServiceResponse<Article> response = articleService.create(article);
+        ServiceResponse<Article> response = articleService.create(1, article);
         log.info(response.getData().toString());
         // 因为数据库目前只有一个记录，所以插入新的数据的id一定是2
         assertTrue(response.getData().getId().equals(2));
@@ -53,9 +49,9 @@ public class ArticleServiceImplTest extends ForumApplicationTests {
     @Test
     public void update(){
         String newTitle = "titlllllle";
-        ArticleVo articleVo = new ArticleVo().setTitle("titlllllle");
+        ArticleDTO articleDTO = new ArticleDTO().setTitle("titlllllle");
 
-        ServiceResponse<Article> serviceResponse = articleService.updateByVo(1, articleVo);
+        ServiceResponse<Article> serviceResponse = articleService.updateByVo(1, articleDTO);
 
         log.info(serviceResponse.getData().toString());
 

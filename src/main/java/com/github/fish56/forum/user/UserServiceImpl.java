@@ -28,14 +28,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ServiceResponse update(Integer userId, UserVo userVo) {
+    public ServiceResponse update(Integer userId, UserDTO userDTO) {
         Optional<User> userOptional = userRepos.findById(userId);
         if (!userOptional.isPresent()){
             return ServiceResponse.getInstance(404, "试图修改的用户不存在");
         }
 
         User user = userOptional.get();
-        user.updateByVo(userVo);
+        user.updateByDTO(userDTO);
 
         // 校验更新后的用户是否符合规则
         String errorMessage = ValidatorUtil.validate(user);

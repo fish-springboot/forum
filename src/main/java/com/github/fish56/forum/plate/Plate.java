@@ -33,28 +33,25 @@ public class Plate {
     private String info;
 
     /**
+     * 版块小图标的链接
+     */
+    private String icon;
+
+    /**
      * 版块的管理员，默认是创建者
      */
     @OneToOne
     private User admin;
 
-    /**
-     * 版块小图标的链接
-     */
-    private String icon;
-
-    public void updateByPlate(Plate plate){
-        if (plate.getTitle() != null) {
-            title = plate.getTitle();
+    public void updateByDTO(PlateDTO plateDTO){
+        if (plateDTO.getTitle() != null) {
+            title = plateDTO.getTitle();
         }
-        if (plate.getAdmin() != null) {
-            admin = plate.getAdmin();
+        if (plateDTO.getInfo() != null){
+            info = plateDTO.getInfo();
         }
-        if (plate.getInfo() != null) {
-            info = plate.getInfo();
-        }
-        if (plate.getIcon() != null) {
-            icon = plate.getIcon();
+        if (plateDTO.getIcon() != null){
+            icon = plateDTO.getIcon();
         }
     }
 }

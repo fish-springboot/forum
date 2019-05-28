@@ -49,15 +49,15 @@ public class PlateControllerTest extends ForumApplicationTests {
     }
 
     /**
-     * 尝试创建一个版块，但是标题不对，会抛出异常
+     * 尝试创建一个版块
+     * 这里缺失了title应该无法用过校验
      * @throws Exception
      */
     @Test
-    public void postPlate2() throws Exception{
-        ResultMatcher is201 = MockMvcResultMatchers.status().is(201);
+    public void postPlateNoTitle() throws Exception{
+        ResultMatcher is400 = MockMvcResultMatchers.status().is(400);
 
         Plate plate = new Plate();
-        plate.setTitle("s");
         plate.setInfo("spring技术交流学习版块");
 
         MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/plates")
@@ -67,7 +67,29 @@ public class PlateControllerTest extends ForumApplicationTests {
 
         mockMvc.perform(builder)
                 .andDo(MockMvcResultHandlers.print())
-                .andExpect(is201);
+                .andExpect(is400);
+    }
+
+    /**
+     * 尝试创建一个版块，但是标题不对，会返回400
+     * @throws Exception
+     */
+    @Test
+    public void postPlate2() throws Exception{
+        ResultMatcher is400 = MockMvcResultMatchers.status().is(400);
+
+        PlateDTO plateDTO = new PlateDTO()
+                .setTitle("s")
+                .setInfo("spring技术交流学习版块");
+
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/plates")
+                .header("Authorization", "bearer " + userToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JSONObject.toJSONString(plateDTO));
+
+        mockMvc.perform(builder)
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(is400);
     }
 
     /**

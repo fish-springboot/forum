@@ -7,11 +7,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
-import org.springframework.validation.BeanPropertyBindingResult;
-import org.springframework.validation.Errors;
-import org.springframework.validation.beanvalidation.SpringValidatorAdapter;
 
-import javax.validation.Validation;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
@@ -66,7 +62,7 @@ public class ValidatorAop {
                     log.info("参数" + i + "被 @ShouldValidate注解了");
 
                     // 检查它的合法性，如果有错误信息，就将它输送给errorMessage
-                    String error = ValidatorUtil.validate(args[i]);
+                    String error = ValidatorUtil.validate(args[i], ((ShouldValidate) a).value());
                     if (error != null) {
                         errorMessage.append(error);
                     }

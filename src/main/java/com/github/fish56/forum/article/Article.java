@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.github.fish56.forum.article.comment.Comment;
 import com.github.fish56.forum.plate.Plate;
 import com.github.fish56.forum.user.User;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -45,12 +46,12 @@ public class Article {
     @JoinColumn(name = "comment_id")
     private List<Comment> comments;
 
-    public void updateByVo(ArticleVo articleVo){
-        if (articleVo.getTitle() != null){
-            this.title = articleVo.getTitle();
+    public void updateByDTO(ArticleDTO articleDTO){
+        if (articleDTO.getTitle() != null){
+            this.title = articleDTO.getTitle();
         }
-        if (articleVo.getContent() != null){
-            this.content = articleVo.getContent();
+        if (articleDTO.getContent() != null){
+            this.content = articleDTO.getContent();
         }
     }
 

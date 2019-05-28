@@ -39,9 +39,9 @@ public class UserServiceImplTest extends ForumApplicationTests {
     @Test
     public void update() {
         String newName = "Jack";
-        UserVo userVo = new UserVo().setName(newName);
+        UserDTO userDTO = new UserDTO().setName(newName);
 
-        ServiceResponse<User> serviceResponse = userService.update(1, userVo);
+        ServiceResponse<User> serviceResponse = userService.update(1, userDTO);
 
         System.out.println(serviceResponse.getData());
         assertEquals(newName, serviceResponse.getData().getName());

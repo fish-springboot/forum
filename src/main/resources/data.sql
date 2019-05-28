@@ -12,8 +12,6 @@ values ('hello@gmail.com', 'Jon', '1234567890', 'hello_token');
 insert into plate (admin_id, icon, info, title)
 values (1, 'icon', 'info', 'koa');
 
--- insert into article (author_id, content, plate_id, state, title, create_time, update_time)
--- values ( 1, 'hello world', 1, 3, 'Spring天下无敌', current_timestamp(), current_timestamp());
 insert into article (author_id, content, plate_id, title, create_time, update_time)
 values ( 1, 'hello world', 1, 'Spring天下无敌', current_timestamp(), current_timestamp());
 

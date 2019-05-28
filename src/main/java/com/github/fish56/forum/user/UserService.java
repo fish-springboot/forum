@@ -13,10 +13,10 @@ public interface UserService {
     /**
      * 根据vo的数据更新一个用户
      * @param userId
-     * @param userVo
+     * @param userDTO
      * @return
      */
-    public ServiceResponse<User> update(Integer userId, UserVo userVo);
+    public ServiceResponse<User> update(Integer userId, UserDTO userDTO);
 
     /**
      * 更新token

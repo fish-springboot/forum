@@ -40,6 +40,7 @@ public class CommentReposTest extends ForumApplicationTests {
         Comment comment = new Comment().setContent("一个评论");
         List<Comment> comments = new ArrayList<>();
         comments.add(comment);
+
         Article article = new Article()
                 .setId(1).setTitle("评论")
                 .setCreateTime(new Date())
@@ -50,5 +51,6 @@ public class CommentReposTest extends ForumApplicationTests {
         Optional<Article> articleOptional = articleRepos.findById(1);
         System.out.println(JSONObject.toJSONString(
                 articleOptional.get()));
+        // {"comments":[{"content":"一个评论","createTime":1559049209352,"id":2,"updateTime":1559049209352}],"createTime":1559049209195,"id":1,"title":"评论","updateTime":1559049209361}
     }
 }
