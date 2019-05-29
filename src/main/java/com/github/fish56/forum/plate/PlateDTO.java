@@ -1,6 +1,7 @@
 package com.github.fish56.forum.plate;
 
 import com.github.fish56.forum.validate.ShouldValidate;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
 

@@ -5,6 +5,7 @@ import com.github.fish56.forum.user.User;
 import com.github.fish56.forum.validate.ShouldValidate;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,13 +24,20 @@ public class PlateController {
     private PlateRepos plateRepos;
 
     @ApiOperation("获得所有版块的列表")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "成功获得版块列表",
+                    response = Plate.class, responseContainer = "List")
+    })
     @GetMapping
     public List<Plate> getPlateList(){
         return plateRepos.findAll();
     }
 
     @ApiOperation("创建一个版块")
-    @ApiResponse(code = 201, message = "成功创建一个版块", response = Plate.class)
+
+    @ApiResponses({
+            @ApiResponse(code = 201, message = "成功创建一个版块", response = Plate.class)
+    })
     @PostMapping
     public ResponseEntity<Plate> postPlate(@ShouldValidate(ShouldValidate.OnCreate.class)
                                                @RequestBody PlateDTO plateDTO,
@@ -43,7 +51,9 @@ public class PlateController {
     }
 
     @ApiOperation("修改版块的信息")
-    @ApiResponse(code = 200, message = "成功修改一个版块", response = Plate.class)
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "成功修改一个版块", response = Plate.class)
+    })
     @RequestMapping(value = "/{plateId}", method = RequestMethod.PATCH)
     public Object editPlates(@PathVariable Integer plateId,
                              @ShouldValidate @RequestBody PlateDTO plateDTO,

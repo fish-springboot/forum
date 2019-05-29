@@ -31,7 +31,9 @@ public class ArticleController {
     private ArticleService articleService;
 
     @ApiOperation("获得所有用户列表")
-    @ApiResponse(code = 200, message = "查询文章列表", response = Article.class, responseContainer = "List")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "查询文章列表", response = Article.class, responseContainer = "List")
+    })
     @GetMapping
     public Object getArticles(@RequestParam(required = false) Integer plateId,
                               @RequestParam(required = false) Integer authorId,
@@ -58,7 +60,9 @@ public class ArticleController {
     }
 
     @ApiOperation("发布一个文章")
-    @ApiResponse(code = 201, message = "发布一个文章", response = Article.class)
+    @ApiResponses({
+            @ApiResponse(code = 201, message = "发布一个文章", response = Article.class)
+    })
     @PostMapping
     public ResponseEntity createArticle(@ApiIgnore @RequestAttribute User user,
                                         @RequestParam Integer plateId,
@@ -81,6 +85,9 @@ public class ArticleController {
     }
 
     @ApiOperation("更新文章的信息")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "更新一个文章", response = Article.class)
+    })
     @RequestMapping(value = "/{articleId}", method = RequestMethod.PATCH)
     public ResponseEntity updateArticle(@PathVariable Integer articleId,
                                         @ShouldValidate @RequestBody ArticleDTO articleDTO){
@@ -88,10 +95,13 @@ public class ArticleController {
         if (articleResponse.hasError()){
             return articleResponse.getErrorResponseEntity();
         }
-        return articleResponse.getSuccessResponseEntity(201);
+        return articleResponse.getSuccessResponseEntity(200);
     }
 
     @ApiOperation("获得单个文章的内容")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "查询到一个文章", response = Article.class)
+    })
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity getArticleInfo(@PathVariable Integer id){
         ServiceResponse response = articleService.findById(id);

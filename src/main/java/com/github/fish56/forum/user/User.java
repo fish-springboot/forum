@@ -2,6 +2,7 @@ package com.github.fish56.forum.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -15,8 +16,6 @@ import javax.validation.constraints.Size;
 @Data
 @Accessors(chain = true)
 public class User {
-    // 但是污染swagger啊，怎么办？
-    // @Null(message = "id 应该交给后代的创建")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -26,15 +25,19 @@ public class User {
      */
     @NotNull(message = "姓名不能为空")
     @Size(min=2, max=20)
-    @Column(unique = true, nullable = false, length = 20) // 映射为字段，值不能为空
+    @Column(nullable = false, length = 20) // 映射为字段，值不能为空
     private String name;
 
+    /**
+     * 登录是采用邮箱+密码，所以邮箱必须是唯一的
+     */
     @NotNull(message = "邮箱不能为空")
     @Size(max=30)
-    @Email(message= "邮箱格式不对" )
+    @Email(message= "邮箱格式不对")
     @Column(length = 30, unique = true)
     private String email;
 
+    @NotNull(message = "用户始终都应该有一个token")
     @Column(unique = true)
     private String token;
 
@@ -62,6 +65,9 @@ public class User {
         }
         if (userDTO.getAvatar() != null) {
             avatar = userDTO.getAvatar();
+        }
+        if (userDTO.getPassword() != null) {
+            password = userDTO.getPassword();
         }
     }
 

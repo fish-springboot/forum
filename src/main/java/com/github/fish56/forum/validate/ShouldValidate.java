@@ -22,4 +22,5 @@ public @interface ShouldValidate {
      * 下面这个没什么具体作用，就用用来做validate的分组
      */
     public static interface OnCreate{}
+    public static interface OnUpdate{}
 }

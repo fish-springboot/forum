@@ -3,6 +3,8 @@ package com.github.fish56.forum.article.comment;
 import com.github.fish56.forum.article.Article;
 import com.github.fish56.forum.user.User;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +19,9 @@ public class CommentController {
     private CommentRepos commentRepos;
 
     @ApiOperation("获得某个文章的内容")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "成功获取评论", response = Comment.class)
+    })
     @GetMapping
     public List<Comment> getCommentList(@PathVariable Integer articleId){
         Article article = new Article();
@@ -25,6 +30,9 @@ public class CommentController {
     }
 
     @ApiOperation("向某个文章提交评论")
+    @ApiResponses({
+            @ApiResponse(code = 201, message = "成功发表评论", response = Comment.class)
+    })
     @PostMapping
     public ResponseEntity<Comment> createComment(@RequestBody CommentDTO commentDTO,
                                                  @ApiIgnore @RequestAttribute User user,
