@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.hibernate.mapping.ToOne;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
